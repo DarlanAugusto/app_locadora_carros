@@ -18,48 +18,58 @@ class MarcaController extends Controller
     {
         $marcas = $this->marca->all();
 
-        return $marcas->toArray();
+        return response()->json($marcas, 200);
     }
 
     public function store(Request $request)
     {
-        $marca = $this->marca;
-        $marca->nome = $request->get('nome');
-        $marca->imagem = $request->get('imagem');
-        $marca->save();
+        $request->validate($this->marca->rules(), $this->marca->feedbacks() );
+        $marca = Marca::create($request->all());
 
-        return $marca->toArray();
+        return response()->json($marca, 201);
     }
 
     public function show($id)
     {
         $marca = $this->marca->find($id);
 
-        return (!$marca) ? ['error' => 'Recurso solicitado indisponível.'] : $marca->toArray();
+        if (!$marca) {
+            return response()->json(['error' => 'Recurso solicitado indisponível.'], 404);
+        }
+
+        return response()->json($marca, 200);
     }
 
     public function update(Request $request, $id)
     {
         $marca = $this->marca->find($id);
 
-        if(!$marca) return ['error' => 'Impossível realizar esta atualização. O recurso solicitado não existe.'];
+        if(!$marca) {
+            return response()->json([
+                'error' => 'Impossível realizar esta atualização. O recurso solicitado não existe.'
+            ], 404);
+        }
 
-        $marca->nome = $request->get('nome');
-        $marca->imagem = $request->get('imagem');
+        $request->validate($marca->rules(), $marca->feedbacks());
+        $marca->update($request->all());
 
-        $marca->save();
-
-        return $marca->toArray();
+        return response()->json($marca, 200);
     }
 
     public function destroy($id)
     {
         $marca = $this->marca->find($id);
 
-        if(!$marca) return ['error' => 'Impossível realizar esta remoção. O recurso solicitado não existe.'];
+        if(!$marca) {
+            return response()->json([
+                'error' => 'Impossível realizar esta exclusão. O recurso solicitado não existe.'
+            ], 404);
+        }
 
         $marca->delete();
 
-        return ["message" => 'Marca "' . $marca->nome . '" foi removida com sucesso!'];
+        return response()->json([
+            "message" => 'Marca "' . $marca->nome . '" foi removida com sucesso!'
+        ], 200);
     }
 }
