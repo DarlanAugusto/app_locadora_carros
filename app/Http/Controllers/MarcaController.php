@@ -50,7 +50,21 @@ class MarcaController extends Controller
             ], 404);
         }
 
-        $request->validate($marca->rules(), $marca->feedbacks());
+        if($request->method() == 'PATCH') {
+
+            $regrasDinamicas= array();
+            foreach($marca->rules() as $field => $rules) {
+                if(array_key_exists($field, $request->all())) {
+                    $regrasDinamicas[ $field ] = $rules;
+                }
+            }
+
+            $request->validate($regrasDinamicas, $marca->feedbacks());
+        }
+        else {
+            $request->validate($marca->rules(), $marca->feedbacks());
+        }
+
         $marca->update($request->all());
 
         return response()->json($marca, 200);
