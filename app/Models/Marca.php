@@ -26,4 +26,9 @@ class Marca extends Model
             'imagem.mimes' => 'O campo :attribute deve ser uma imagem do tipo PNG'
         ];
     }
+
+    public function modelos()
+    {
+        return $this->hasMany('App\Models\Modelo', 'marca_id', 'id');
+    }
 }

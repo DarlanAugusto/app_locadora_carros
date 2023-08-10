@@ -42,4 +42,9 @@ class Modelo extends Model
             'boolean' => 'O campo :attribute deve ser um booleano (true, false)'
         ];
     }
+
+    public function marca()
+    {
+        return $this->belongsTo('App\Models\Marca', 'marca_id', 'id');
+    }
 }

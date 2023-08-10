@@ -17,7 +17,7 @@ class ModeloController extends Controller
 
     public function index()
     {
-        $modelos = $this->modelo->all();
+        $modelos = $this->modelo->with(['marca'])->get();
 
         return response()->json($modelos, 200);
     }
@@ -42,7 +42,7 @@ class ModeloController extends Controller
 
     public function show($id)
     {
-        $modelo = $this->modelo->find($id);
+        $modelo = $this->modelo->with(['marca'])->find($id);
 
         if (!$modelo) {
             return response()->json(['error' => 'Recurso solicitado indisponível.'], 404);
@@ -53,7 +53,7 @@ class ModeloController extends Controller
 
     public function update(Request $request, $id)
     {
-        $modelo = $this->modelo->find($id);
+        $modelo = $this->modelo->with(['marca'])->find($id);
 
         if(!$modelo) {
             return response()->json([
@@ -85,6 +85,9 @@ class ModeloController extends Controller
             $path = $request->imagem->store('images/modelo', 'public');
             $request = $request->all();
             $request['imagem'] = $path;
+        }
+        else {
+            $request = $request->all();
         }
 
         $modelo->update($request);
