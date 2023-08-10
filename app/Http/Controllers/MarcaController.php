@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Marca;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class MarcaController extends Controller
 {
@@ -71,6 +72,11 @@ class MarcaController extends Controller
         }
 
         if(array_key_exists('imagem', $request->all())) {
+
+            if($marca->imagem) {
+                Storage::disk('public')->delete($marca->imagem);
+            }
+
             $path = $request->imagem->store('images/marca', 'public');
             $request = $request->all();
             $request['imagem'] = $path;
@@ -89,6 +95,10 @@ class MarcaController extends Controller
             return response()->json([
                 'error' => 'Impossível realizar esta exclusão. O recurso solicitado não existe.'
             ], 404);
+        }
+
+        if($marca->imagem) {
+            Storage::disk('public')->delete($marca->imagem);
         }
 
         $marca->delete();
