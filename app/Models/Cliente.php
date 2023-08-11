@@ -25,4 +25,9 @@ class Cliente extends Model
             'nome.unique' => 'Esse nome já existe',
         ];
     }
+
+    public function locacoes()
+    {
+        return $this->hasMany('App\Models\Locacao', 'cliente_id', 'id');
+    }
 }

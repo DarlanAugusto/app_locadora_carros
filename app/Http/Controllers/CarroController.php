@@ -20,6 +20,7 @@ class CarroController extends Controller
     {
         $carroRepository = new CarroRepository($this->carro);
         $carroRepository->selectFieldsRelationship('modelo', $request->modelo_fields);
+        $carroRepository->selectFieldsRelationship('locacoes', $request->locacao_fields);
         $carroRepository->filter($request->filter);
         $carroRepository->selectFields($request->fields);
 
@@ -37,7 +38,7 @@ class CarroController extends Controller
 
     public function show($id)
     {
-        $carro = $this->carro->with(['modelo'])->find($id);
+        $carro = $this->carro->with(['modelo', 'locacoes'])->find($id);
 
         if (!$carro) {
             return response()->json(['error' => 'Recurso solicitado indisponível.'], 404);
@@ -48,7 +49,7 @@ class CarroController extends Controller
 
     public function update(Request $request, $id)
     {
-        $carro = $this->carro->with(['modelo'])->find($id);
+        $carro = $this->carro->with(['modelo', 'locacoes'])->find($id);
 
         if(!$carro) {
             return response()->json([

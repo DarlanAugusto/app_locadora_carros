@@ -18,6 +18,7 @@ class ClienteController extends Controller
     public function index(Request $request)
     {
         $clienteRepository = new ClienteRepository($this->cliente);
+        $clienteRepository->selectFieldsRelationship('locacoes', $request->locacao_fields);
         $clienteRepository->filter($request->filter);
         $clienteRepository->selectFields($request->fields);
 
@@ -35,7 +36,7 @@ class ClienteController extends Controller
 
     public function show($id)
     {
-        $cliente = $this->cliente->find($id);
+        $cliente = $this->cliente->with(['locacoes'])->find($id);
 
         if (!$cliente) {
             return response()->json(['error' => 'Recurso solicitado indisponível.'], 404);
@@ -46,7 +47,7 @@ class ClienteController extends Controller
 
     public function update(Request $request, $id)
     {
-        $cliente = $this->cliente->find($id);
+        $cliente = $this->cliente->with(['locacoes'])->find($id);
 
         if(!$cliente) {
             return response()->json([
