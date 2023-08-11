@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Marca;
+use App\Repositories\MarcaRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,38 +18,12 @@ class MarcaController extends Controller
 
     public function index(Request $request)
     {
-        $marcas = array();
+        $marcaRepository = new MarcaRepository($this->marca);
+        $marcaRepository->selectFieldsRelationships('modelos', $request->modelo_fields);
+        $marcaRepository->filter($request->filter);
+        $marcaRepository->selectFields($request->fields);
 
-        // Campos do modelo
-        if($request->has('modelo_fields')) {
-            $marcas = $this->marca->with(["modelos:id,$request->modelo_fields"]);
-        }
-        else {
-            $marcas = $this->marca->with(["modelos"]);
-        }
-
-        // Filtros where
-        if($request->has('filter')) {
-            $conditions = explode(';', $request->filter);
-
-            foreach($conditions as $condition) {
-                $where = explode(':', $condition);
-                $marcas = $marcas->where($where[0], $where[1], $where[2]);
-            }
-
-        }
-
-        // Campos da marca
-        if($request->has('fields')) {
-            $marcas = $marcas
-                ->selectRaw($request->fields)
-                ->get();
-
-        } else {
-            $marcas = $marcas->get();
-        }
-
-        return response()->json($marcas, 200);
+        return response()->json($marcaRepository->getResults(), 200);
     }
 
     public function store(Request $request)
