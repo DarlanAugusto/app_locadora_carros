@@ -19,7 +19,7 @@ class MarcaController extends Controller
     public function index(Request $request)
     {
         $marcaRepository = new MarcaRepository($this->marca);
-        $marcaRepository->selectFieldsRelationships('modelos', $request->modelo_fields);
+        $marcaRepository->selectFieldsRelationship('modelos', $request->modelo_fields);
         $marcaRepository->filter($request->filter);
         $marcaRepository->selectFields($request->fields);
 

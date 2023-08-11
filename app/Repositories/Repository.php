@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
             $this->model = $model;
         }
 
-        public function selectFieldsRelationships($relationship, $fields)
+        public function selectFieldsRelationship($relationship, $fields)
         {
             if($fields) {
                 $this->model = $this->model->with(["$relationship:id,$fields"]);
