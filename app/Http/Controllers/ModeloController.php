@@ -15,9 +15,18 @@ class ModeloController extends Controller
         $this->modelo = $modelo;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $modelos = $this->modelo->with(['marca'])->get();
+        $modelos = array();
+        if($request->has('fields')) {
+            $modelos = $this->modelo
+                ->selectRaw($request->fields)
+                ->with(['marca'])
+                ->get();
+
+        } else {
+            $modelos = $this->modelo->with(['marca'])->get();
+        }
 
         return response()->json($modelos, 200);
     }

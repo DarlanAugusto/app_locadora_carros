@@ -19,7 +19,8 @@ class Modelo extends Model
         'abs'
     ];
 
-    public function rules() {
+    public function rules()
+    {
         return [
             'nome' => 'required|unique:App\Models\Modelo,nome,' . $this->id,
             'imagem' => 'required|file|mimes:png',
@@ -31,7 +32,8 @@ class Modelo extends Model
         ];
     }
 
-    public function feedbacks() {
+    public function feedbacks()
+    {
         return [
             'required' => 'O campo :attribute é obrigatório',
             'nome.unique' => 'Esse modelo já existe',

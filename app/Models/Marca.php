@@ -11,14 +11,16 @@ class Marca extends Model
 
     protected $fillable = ['nome', 'imagem'];
 
-    public function rules() {
+    public function rules()
+    {
         return [
             'nome' => 'required|unique:App\Models\Marca,nome,' . $this->id,
             'imagem' => 'required|file|mimes:png'
         ];
     }
 
-    public function feedbacks() {
+    public function feedbacks()
+    {
         return [
             'required' => 'O campo :attribute é obrigatório',
             'nome.unique' => 'Essa marca já existe',
