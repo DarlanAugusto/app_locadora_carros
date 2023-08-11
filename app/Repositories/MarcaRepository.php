@@ -1,7 +1,7 @@
 <?php
     namespace App\Repositories;
 
-    class MarcaRepository extends Repository {
+    class MarcaRepository extends AbstractRepository {
 
     }
 ?>

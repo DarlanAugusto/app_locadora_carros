@@ -3,7 +3,7 @@ namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 
-    class Repository {
+    class AbstractRepository {
 
         public $model;
 
