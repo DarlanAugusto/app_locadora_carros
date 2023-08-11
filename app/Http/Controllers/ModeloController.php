@@ -19,7 +19,8 @@ class ModeloController extends Controller
     public function index(Request $request)
     {
         $modeloRepository = new ModeloRepository($this->modelo);
-        $modeloRepository->selectFieldsRelationship('marca', $request->modelo_fields);
+        $modeloRepository->selectFieldsRelationship('marca', $request->marca_fields);
+        $modeloRepository->selectFieldsRelationship('carros', $request->carro_fields);
         $modeloRepository->filter($request->filter);
         $modeloRepository->selectFields($request->fields);
 
@@ -46,7 +47,7 @@ class ModeloController extends Controller
 
     public function show($id)
     {
-        $modelo = $this->modelo->with(['marca'])->find($id);
+        $modelo = $this->modelo->with(['marca', 'carros'])->find($id);
 
         if (!$modelo) {
             return response()->json(['error' => 'Recurso solicitado indisponível.'], 404);
@@ -57,7 +58,7 @@ class ModeloController extends Controller
 
     public function update(Request $request, $id)
     {
-        $modelo = $this->modelo->with(['marca'])->find($id);
+        $modelo = $this->modelo->with(['marca', 'carros'])->find($id);
 
         if(!$modelo) {
             return response()->json([
