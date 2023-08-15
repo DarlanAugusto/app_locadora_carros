@@ -8,15 +8,22 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-5">
-                                <div class="form-group">
-                                    <label for="id">ID</label>
-                                    <input class="form-control" type="text" id="id" placeholder="ID da Marca" autocomplete="off">
-                                </div>
+                                <Input
+                                    id="id"
+                                    label="ID"
+                                    type="text"
+                                    placeholder="ID da Marca"
+
+                                />
                             </div>
                             <div class="col-5">
                                 <div class="form-group">
-                                    <label for="nome">Nome</label>
-                                    <input class="form-control" type="text" id="nome" placeholder="Nome da Marca" autocomplete="off">
+                                    <Input
+                                        id="nome"
+                                        label="Nome"
+                                        type="text"
+                                        placeholder="Nome da Marca"
+                                    />
                                 </div>
                             </div>
                             <div class="col-2">
@@ -34,7 +41,9 @@
 </template>
 
 <script>
-    export default {
+    import Input from './Input.vue';
 
-    }
+    export default {
+    components: { Input, Input }
+}
 </script>
