@@ -3,7 +3,12 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header" v-if="header">.: {{ header }}</div>
+                    <div class="card-header" v-if="header">
+                        <div class="d-flex justify-content-between">
+                            <span>.: {{ header }}</span>
+                            <slot name="headerActions"></slot>
+                        </div>
+                    </div>
 
                     <div class="card-body">
                         <slot name="body" />

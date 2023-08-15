@@ -1,5 +1,13 @@
 <template>
     <Card header="Marcas">
+        <template v-slot:headerActions>
+            <Button className="btn-primary btn-small" label="Novo">
+                <template v-slot:icon>
+                    <i class="bi bi-plus"></i>
+                </template>
+            </Button>
+        </template>
+
         <template v-slot:body>
             <div class="row">
                 <div class="col-5">
@@ -41,8 +49,9 @@
     import Input from './Input.vue';
     import Table from './Table.vue';
     import Card from './Card.vue';
+    import Button from './Button.vue';
 
     export default {
-        components: { Input, Table, Card }
+        components: { Input, Table, Card, Button }
 }
 </script>
