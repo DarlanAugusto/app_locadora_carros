@@ -1,21 +1,13 @@
 <template>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">Home</div>
-
-                    <div class="card-body">
-                        Você está logado!
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <Card header="Home">
+        <p>Você está logado!</p>
+    </Card>
 </template>
 
 <script>
-    export default {
+    import Card from './Card.vue';
 
+    export default {
+        components: { Card }
     }
 </script>
