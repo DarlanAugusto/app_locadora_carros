@@ -32,9 +32,10 @@ Route::prefix('v1')->group(function() {
         Route::post('me', [AuthController::class, 'me']);
         Route::post('refresh', [AuthController::class, 'refresh']);
         Route::post('logout', [AuthController::class, 'logout']);
+        // Route::apiResource('user', UserController::class);
     });
 
-    Route::post('login', [AuthController::class, 'login']);
+    Route::post('login', [AuthController::class, 'login'])->name('api.login');
 
 });
 
