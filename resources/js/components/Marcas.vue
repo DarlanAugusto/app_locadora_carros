@@ -11,22 +11,15 @@
         <template v-slot:body>
             <div class="row">
                 <div class="col-5">
-                    <Input
-                        id="id"
-                        label="ID"
-                        type="text"
-                        placeholder="ID da Marca"
-
-                    />
+                    <InputContainer inputId="id" label="ID">
+                        <input type="text" id="id" class="form-control" placeholder="ID da Marca">
+                    </InputContainer>
                 </div>
                 <div class="col-5">
                     <div class="form-group">
-                        <Input
-                            id="nome"
-                            label="Nome"
-                            type="text"
-                            placeholder="Nome da Marca"
-                        />
+                        <InputContainer inputId="nome" label="Nome">
+                            <input type="text" id="nome" class="form-control" placeholder="Nome da Marca">
+                        </InputContainer>
                     </div>
                 </div>
                 <div class="col-2">
@@ -51,26 +44,27 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <Input
-                                    id="nome"
-                                    label="Nome"
-                                    type="text"
-                                    placeholder="Nome da Marca"
-                                    :v-model="newMarcaName"
-                                />
+                                <InputContainer inputId="newMarcaName" label="Nome">
+                                    <input
+                                        type="text"
+                                        id="newMarcaName"
+                                        class="form-control"
+                                        placeholder="Nome da Marca"
+                                        v-model="newMarcaName"
+                                    />
+                                </InputContainer>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
-                                <Input
-                                    id="iamgem"
-                                    label="Imagem"
-                                    type="file"
-                                    placeholder="Selecionar PNG"
-                                    class-name="form-control-file"
-                                    help-text="Apenas imagens PNG"
-                                    @change="loadImage($event)"
-                                />
+                                <InputContainer input-id="newMarcaImage" label="Imagem" help-Text="Apenas imagens PNG">
+                                    <input
+                                        type="file"
+                                        id="newMarcaImage"
+                                        class="form-control"
+                                        @change="loadImage($event)"
+                                    />
+                                </InputContainer>
                             </div>
                         </div>
                     </div>
@@ -85,14 +79,14 @@
 </template>
 
 <script>
-    import Input from './Input.vue';
+    import InputContainer from './InputContainer.vue';
     import Table from './Table.vue';
     import Card from './Card.vue';
     import Button from './Button.vue';
     import Modal from './Modal.vue';
 
     export default {
-        components: { Input, Table, Card, Button, Modal },
+        components: { InputContainer, Table, Card, Button, Modal },
         data() {
             return {
                 newMarcaImage: '',
@@ -100,18 +94,35 @@
                 apiUrl: 'http://localhost:8000/api/v1'
             }
         },
+        computed: {
+            token() {
+                let token = document.cookie.split(';');
+
+                return token
+                    .find(index => index.includes('token='))
+                    .split('=')[1];
+            }
+        },
         methods: {
             loadImage(event) {
                 this.newMarcaImage = event.target.files
             },
             save() {
-                const newMarca = {
-                    nome: this.newMarcaName,
-                    imagem: this.newMarcaImage
+
+                const formData = new FormData();
+                formData.append('nome', this.newMarcaName);
+                formData.append('imagem', this.newMarcaImage[0]);
+
+                const config = {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Content-Type': 'multipart/form-data',
+                        'Accept': 'application/json'
+                    }
                 }
 
                 axios
-                    .post(`${this.apiUrl}/marca`, newMarca)
+                    .post(`${this.apiUrl}/marca`, formData, config)
                     .then(response => {
                         console.log(response);
                     })

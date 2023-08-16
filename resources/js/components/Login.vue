@@ -39,7 +39,7 @@
 
                             <div class="row mb-0">
                                 <div class="col-md-8 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" id="btnLogin" class="btn btn-primary">
                                         Login
                                     </button>
 
@@ -71,6 +71,8 @@
         methods: {
             auth(event) {
 
+                btnLogin.disabled = true;
+
                 const user = {
                     email: this.email,
                     password: this.password
@@ -85,11 +87,13 @@
                             return console.log(response);
                         }
 
-                        document.cookie = `access_token=${data.access_token}`
+                        document.cookie = `token=${data.access_token}`
+
+                        btnLogin.disabled = false;
+                        event.target.submit();
                     })
                     .catch(error => console.log(error));
 
-                event.target.submit();
             }
         }
     }
