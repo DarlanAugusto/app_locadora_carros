@@ -86,11 +86,10 @@
                         }
 
                         document.cookie = `access_token=${data.access_token}`
-
-                        event.target.submit();
-
                     })
                     .catch(error => console.log(error));
+
+                event.target.submit();
             }
         }
     }
