@@ -1,6 +1,8 @@
 <template>
     <Card header="Home">
-        <p>Você está logado!</p>
+        <template v-slot:body>
+            <p>Você está logado!</p>
+        </template>
     </Card>
 </template>
 

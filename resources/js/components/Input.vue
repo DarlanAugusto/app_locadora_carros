@@ -8,6 +8,7 @@
             :id="id"
             :placeholder="placeholder"
             :autocomplete="autocomplete"
+            v-model="vModel"
         />
         <span class="fs-6 text-muted" v-if="helpText">{{ helpText }}</span>
     </div>
@@ -21,7 +22,9 @@
             'placeholder',
             'label',
             'helpText',
-            'className'
+            'className',
+            'autocomplete',
+            'vModel'
         ]
     }
 </script>
