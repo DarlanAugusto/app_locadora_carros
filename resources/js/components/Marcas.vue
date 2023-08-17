@@ -41,9 +41,16 @@
                 :close-button="true">
 
                 <template v-slot:modalAlert>
-                    <Alert type="info">
-                        teste
-                    </Alert>
+                    <Alert
+                        v-if="status == 'success'"
+                        type="success"
+                        :details="statusDetails"
+                    />
+                    <Alert
+                        v-if="status == 'error'"
+                        type="danger"
+                        :details="statusDetails"
+                    />
                 </template>
 
                 <template v-slot:modalBody>
@@ -105,16 +112,16 @@
             return {
                 newMarcaImage: '',
                 newMarcaName: '',
-                apiUrl: 'http://localhost:8000/api/v1'
+                apiUrl: 'http://localhost:8000/api/v1',
+                status: '',
+                statusDetails: []
             }
         },
         computed: {
             token() {
-                let token = document.cookie.split(';');
+                let token = document.cookie.split(';').find(index => index.includes('token=')) || '=';
 
-                return token
-                    .find(index => index.includes('token='))
-                    .split('=')[1];
+                return token.split('=')[1];
             }
         },
         methods: {
@@ -138,9 +145,14 @@
                 axios
                     .post(`${this.apiUrl}/marca`, formData, config)
                     .then(response => {
-                        console.log(response);
+                        this.status = 'success';
+                        this.statusDetails = response;
                     })
-                    .catch(error => console.log(error));
+                    .catch(error => {
+                        this.status = 'error';
+                        this.statusDetails = error.response;
+                        console.log(error.response);
+                    });
             }
         }
 }
