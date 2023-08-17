@@ -30,9 +30,13 @@
                 </div>
             </div>
 
-            <hr>
+            <hr v-if="marcas.length">
 
-            <Table />
+            <Table
+                v-if="marcas.length"
+                :data="marcas"
+                :headers="['id', 'nome', 'imagem']"
+            />
 
             <Modal
                 id="newMarcaModal"
@@ -114,7 +118,8 @@
                 newMarcaName: '',
                 apiUrl: 'http://localhost:8000/api/v1',
                 status: '',
-                statusDetails: []
+                statusDetails: [],
+                marcas: []
             }
         },
         computed: {
@@ -127,6 +132,22 @@
         methods: {
             loadImage(event) {
                 this.newMarcaImage = event.target.files
+            },
+            getMarcas() {
+                const config = {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Accept': 'application/json'
+                    }
+                }
+
+                axios
+                    .get(`${this.apiUrl}/marca`, config)
+                    .then(respose => {
+                        this.marcas = respose.data;
+
+                        console.log(this.marcas);
+                    })
             },
             save() {
 
@@ -154,6 +175,9 @@
                         console.log(error.response);
                     });
             }
+        },
+        mounted() {
+            this.getMarcas();
         }
 }
 </script>
