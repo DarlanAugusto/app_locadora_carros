@@ -13,6 +13,7 @@
                         />
                     </div>
                     <div class="modal-body">
+                        <slot name="modalAlert"/>
                         <slot name="modalBody"/>
                     </div>
                     <div class="modal-footer">

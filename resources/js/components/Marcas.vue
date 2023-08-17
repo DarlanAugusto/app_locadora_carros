@@ -38,8 +38,14 @@
                 id="newMarcaModal"
                 title-id="newMarcaModalLabel"
                 title="Nova Marca"
-                :close-button="true"
-            >
+                :close-button="true">
+
+                <template v-slot:modalAlert>
+                    <Alert type="info">
+                        teste
+                    </Alert>
+                </template>
+
                 <template v-slot:modalBody>
                     <div class="row">
                         <div class="col">
@@ -84,9 +90,17 @@
     import Card from './Card.vue';
     import Button from './Button.vue';
     import Modal from './Modal.vue';
+    import Alert from './Alert.vue';
 
     export default {
-        components: { InputContainer, Table, Card, Button, Modal },
+        components: {
+            InputContainer,
+            Table,
+            Card,
+            Button,
+            Modal,
+            Alert
+        },
         data() {
             return {
                 newMarcaImage: '',
