@@ -12,20 +12,20 @@
             <div class="row">
                 <div class="col-4">
                     <InputContainer inputId="id" label="ID">
-                        <input type="text" id="id" class="form-control" placeholder="ID da Marca">
+                        <input type="text" id="id" class="form-control" placeholder="ID da Marca" v-model="search.id">
                     </InputContainer>
                 </div>
                 <div class="col-4">
                     <div class="form-group">
                         <InputContainer inputId="nome" label="Nome">
-                            <input type="text" id="nome" class="form-control" placeholder="Nome da Marca">
+                            <input type="text" id="nome" class="form-control" placeholder="Nome da Marca" v-model="search.nome">
                         </InputContainer>
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="form-group">
                         <label for="">&nbsp;</label>
-                        <button type="button" class="btn btn-primary form-control">Buscar</button>
+                        <button type="button" class="btn btn-primary form-control" @click="filter()">Buscar</button>
                     </div>
                 </div>
             </div>
@@ -133,15 +133,20 @@
                 newMarcaImage: '',
                 newMarcaName: '',
                 apiUrl: 'http://localhost:8000/api/v1/marca',
+                urlPaginate: '',
+                urlFilter: '',
                 status: '',
                 statusDetails: [],
                 marcas: {},
-                paginateClass: [],
                 headers: {
                     id: { title: "Id", type: "text" },
                     nome: { title: "Nome", type: "text" },
                     imagem: { title: "Imagem", type: "file" },
                     created_at: { title: "Data de Criação", type: "date" }
+                },
+                search: {
+                    id: '',
+                    nome: ''
                 }
             }
         },
@@ -157,6 +162,17 @@
                 this.newMarcaImage = event.target.files
             },
             getMarcas() {
+                let url = this.apiUrl;
+
+                if(this.urlPaginate != '') {
+                    url += `?${this.urlPaginate}`;
+                }
+
+                if(this.urlFilter != '') {
+                    url += (this.urlPaginate != '') ? '&' : '?';
+                    url += `filter=${this.urlFilter}`;
+                }
+
                 const config = {
                     headers: {
                         'Authorization': `Bearer ${this.token}`,
@@ -165,7 +181,7 @@
                 }
 
                 axios
-                    .get(this.apiUrl, config)
+                    .get(url, config)
                     .then(respose => {
                         this.marcas = respose.data;
                         // console.log(this.marcas);
@@ -201,7 +217,30 @@
 
                 if(!page.url) return;
 
-                this.apiUrl = page.url;
+                let paginate = page.url.split('?');
+                this.urlPaginate = paginate[1];
+
+                this.getMarcas();
+            },
+            filter() {
+
+                let filters = '';
+
+                for (const key in this.search) {
+
+                    if(this.search[key]) {
+
+                        filters += (filters != '') ? `;${key}:like:%${this.search[key]}%` : `${key}:like:%${this.search[key]}%`;
+
+                    }
+
+                    if(filters != '') {
+                        this.urlPaginate = '';
+                    }
+
+                }
+
+                this.urlFilter = filters;
                 this.getMarcas();
             }
         },
