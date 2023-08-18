@@ -35,8 +35,7 @@
             <Table
                 v-if="marcas.length"
                 :data="marcas"
-                :headers="['id', 'nome', 'imagem']"
-            />
+                :headers="headers" />
 
             <Modal
                 id="newMarcaModal"
@@ -119,7 +118,25 @@
                 apiUrl: 'http://localhost:8000/api/v1',
                 status: '',
                 statusDetails: [],
-                marcas: []
+                marcas: {},
+                headers: {
+                    id: {
+                        title: "Id",
+                        type: "text"
+                    },
+                    nome: {
+                        title: "Nome",
+                        type: "text"
+                    },
+                    imagem: {
+                        title: "Imagem",
+                        type: "file"
+                    },
+                    created_at: {
+                        title: "Data de Criação",
+                        type: "date"
+                    }
+                }
             }
         },
         computed: {
