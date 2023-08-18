@@ -23,7 +23,7 @@ class MarcaController extends Controller
         $marcaRepository->filter($request->filter);
         $marcaRepository->selectFields($request->fields);
 
-        return response()->json($marcaRepository->getResults(), 200);
+        return response()->json($marcaRepository->getResultsPaginate(3), 200);
     }
 
     public function store(Request $request)

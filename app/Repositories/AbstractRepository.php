@@ -48,5 +48,10 @@ use Illuminate\Database\Eloquent\Model;
         {
             return $this->model->get();
         }
+
+        public function getResultsPaginate($resultsPerPage)
+        {
+            return $this->model->paginate($resultsPerPage);
+        }
     }
 ?>

@@ -9,12 +9,8 @@
                             <slot name="headerActions"></slot>
                         </div>
                     </div>
-
-                    <div class="card-body">
-                        <slot name="body" />
-                    </div>
-
-                    <div class="card-footer" v-if="footer">{{ footer }}</div>
+                    <div class="card-body"><slot name="body" /></div>
+                    <div class="card-footer"><slot name="footer" /></div>
                 </div>
             </div>
         </div>

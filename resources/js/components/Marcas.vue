@@ -10,19 +10,19 @@
 
         <template v-slot:body>
             <div class="row">
-                <div class="col-5">
+                <div class="col-4">
                     <InputContainer inputId="id" label="ID">
                         <input type="text" id="id" class="form-control" placeholder="ID da Marca">
                     </InputContainer>
                 </div>
-                <div class="col-5">
+                <div class="col-4">
                     <div class="form-group">
                         <InputContainer inputId="nome" label="Nome">
                             <input type="text" id="nome" class="form-control" placeholder="Nome da Marca">
                         </InputContainer>
                     </div>
                 </div>
-                <div class="col-2">
+                <div class="col-4">
                     <div class="form-group">
                         <label for="">&nbsp;</label>
                         <button type="button" class="btn btn-primary form-control">Buscar</button>
@@ -30,12 +30,13 @@
                 </div>
             </div>
 
-            <hr v-if="marcas.length">
+            <hr v-if="marcas.data">
 
             <Table
-                v-if="marcas.length"
-                :data="marcas"
-                :headers="headers" />
+                v-if="marcas.data"
+                :data="marcas.data"
+                :headers="headers"
+            />
 
             <Modal
                 id="newMarcaModal"
@@ -91,6 +92,20 @@
                 </template>
             </Modal>
         </template>
+
+        <template v-slot:footer>
+            <Paginate>
+                <li
+                    class="page-item"
+                    v-for="page, key in marcas.links"
+                    :key="key"
+                    :class="page.active ? 'active' : ''"
+                    >
+
+                    <a class="page-link" :href="page.url" v-html="page.label" @click.prevent="paginate(page)"></a>
+                </li>
+            </Paginate>
+        </template>
     </Card>
 </template>
 
@@ -101,6 +116,7 @@
     import Button from './Button.vue';
     import Modal from './Modal.vue';
     import Alert from './Alert.vue';
+    import Paginate from './Paginate.vue';
 
     export default {
         components: {
@@ -109,33 +125,23 @@
             Card,
             Button,
             Modal,
-            Alert
+            Alert,
+            Paginate
         },
         data() {
             return {
                 newMarcaImage: '',
                 newMarcaName: '',
-                apiUrl: 'http://localhost:8000/api/v1',
+                apiUrl: 'http://localhost:8000/api/v1/marca',
                 status: '',
                 statusDetails: [],
                 marcas: {},
+                paginateClass: [],
                 headers: {
-                    id: {
-                        title: "Id",
-                        type: "text"
-                    },
-                    nome: {
-                        title: "Nome",
-                        type: "text"
-                    },
-                    imagem: {
-                        title: "Imagem",
-                        type: "file"
-                    },
-                    created_at: {
-                        title: "Data de Criação",
-                        type: "date"
-                    }
+                    id: { title: "Id", type: "text" },
+                    nome: { title: "Nome", type: "text" },
+                    imagem: { title: "Imagem", type: "file" },
+                    created_at: { title: "Data de Criação", type: "date" }
                 }
             }
         },
@@ -159,11 +165,10 @@
                 }
 
                 axios
-                    .get(`${this.apiUrl}/marca`, config)
+                    .get(this.apiUrl, config)
                     .then(respose => {
                         this.marcas = respose.data;
-
-                        console.log(this.marcas);
+                        // console.log(this.marcas);
                     })
             },
             save() {
@@ -181,7 +186,7 @@
                 }
 
                 axios
-                    .post(`${this.apiUrl}/marca`, formData, config)
+                    .post(this.apiUrl, formData, config)
                     .then(response => {
                         this.status = 'success';
                         this.statusDetails = response;
@@ -191,6 +196,13 @@
                         this.statusDetails = error.response;
                         console.log(error.response);
                     });
+            },
+            paginate(page) {
+
+                if(!page.url) return;
+
+                this.apiUrl = page.url;
+                this.getMarcas();
             }
         },
         mounted() {

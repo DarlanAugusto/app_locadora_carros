@@ -2,7 +2,7 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th v-for="th in headers" :key="th">{{ th.title }}</th>
+                <th v-for="th, key in headers" :key="key">{{ th.title }}</th>
             </tr>
         </thead>
         <tbody>
