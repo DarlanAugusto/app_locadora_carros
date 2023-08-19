@@ -104,11 +104,12 @@ class MarcaController extends Controller
             ], 404);
         }
 
+
+        $marca->delete();
+
         if($marca->imagem) {
             Storage::disk('public')->delete($marca->imagem);
         }
-
-        $marca->delete();
 
         return response()->json([
             "message" => 'Marca "' . $marca->nome . '" foi removida com sucesso!'

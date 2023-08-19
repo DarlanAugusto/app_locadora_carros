@@ -4,7 +4,7 @@
             <tr>
                 <th v-for="th, key in headers" :key="key">{{ th.title }}</th>
 
-                <th v-if="show.visible || update || remove.visible"></th>
+                <th v-if="show.visible || update.visible || remove.visible"></th>
             </tr>
         </thead>
         <tbody>
@@ -15,7 +15,7 @@
                     <span v-else>{{ item[key] }}</span>
                 </td>
 
-                <td class="text-right" v-if="show.visible || update || remove.visible">
+                <td class="text-right" v-if="show.visible || update.visible || remove.visible">
                     <div class="d-flex justify-content-between">
                         <button
                             class="text-primary btn btn-link"
@@ -29,7 +29,17 @@
                             <i class="bi bi-eye-fill"/>
                         </button>
 
-                        <i v-if="update" class="bi bi-pencil-square text-secondary btn btn-link"></i>
+
+                        <button
+                            class="text-secondary btn btn-link"
+                            type="button"
+                            v-if="update.visible"
+                            data-bs-toggle="modal"
+                            :data-bs-target="update.target"
+                            @click="setStore(item)">
+
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
 
                         <button
                             class="text-danger btn btn-link"
