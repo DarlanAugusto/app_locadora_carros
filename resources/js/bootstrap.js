@@ -1,3 +1,5 @@
+const { default: axios } = require('axios');
+
 window._ = require('lodash');
 
 try {
@@ -50,11 +52,30 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
     response => {
-        console.log('Interceptando Response', response);
         return response;
     },
     error => {
-        console.log('Erro no response: ', error);
+        if(error.response.status === 401 && error.response.data.message === 'Token has expired') {
+            alert('Ooops, seu token expirou!\n\nAo recarregar a página, tente novamente.')
+
+            axios
+                .post('http://127.0.0.1:8000/api/v1/refresh')
+                .then(response => {
+                    const data = response.data
+
+                    if(!data.access_token) {
+                        return Promise.reject(response);
+                    }
+
+                    document.cookie = `token=${data.access_token}`
+
+                    location.reload();
+                })
+                .catch(error => {
+                    return Promise.reject(error);
+                })
+        }
+
         return Promise.reject(error);
     }
 );
