@@ -36,8 +36,13 @@
                 v-if="marcas.data"
                 :data="marcas.data"
                 :headers="headers"
+                :show="true"
+                id-show-item-modal="showMarcaModal"
+                :update="true"
+                :remove="true"
             />
 
+            <!-- Modal Adicionar Marca -->
             <Modal
                 id="newMarcaModal"
                 title-id="newMarcaModalLabel"
@@ -89,6 +94,17 @@
 
                 <template v-slot:modalFooter>
                     <button type="button" class="btn btn-primary" @click="save()">Salvar</button>
+                </template>
+            </Modal>
+
+            <!-- Modal Visualizar Marca -->
+            <Modal
+                id="showMarcaModal"
+                title-id="showMarcaModalLabel"
+                title="Marca"
+                :close-button="true">
+                <template v-slot:modalBody>
+                    ...
                 </template>
             </Modal>
         </template>
@@ -147,7 +163,8 @@
                 search: {
                     id: '',
                     nome: ''
-                }
+                },
+                showMarca: {}
             }
         },
         computed: {
