@@ -30,3 +30,31 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+axios.interceptors.request.use(
+    config => {
+
+        let token = document.cookie.split(';').find(index => index.includes('token=')) || '=';
+        token = token.split('=')[1];
+
+        config.headers.Authorization = `Bearer ${token}`;
+        config.headers.Accept = 'application/json';
+
+        return config;
+    },
+    error => {
+        console.log('Erro no request: ', error);
+        return Promise.reject(error);
+    }
+);
+
+axios.interceptors.response.use(
+    response => {
+        console.log('Interceptando Response', response);
+        return response;
+    },
+    error => {
+        console.log('Erro no response: ', error);
+        return Promise.reject(error);
+    }
+);

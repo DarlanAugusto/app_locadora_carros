@@ -297,13 +297,6 @@
                 showMarca: {}
             }
         },
-        computed: {
-            token() {
-                let token = document.cookie.split(';').find(index => index.includes('token=')) || '=';
-
-                return token.split('=')[1];
-            }
-        },
         methods: {
 
             loadImage(event) {
@@ -322,15 +315,8 @@
                     url += `filter=${this.urlFilter}`;
                 }
 
-                const config = {
-                    headers: {
-                        'Authorization': `Bearer ${this.token}`,
-                        'Accept': 'application/json'
-                    }
-                }
-
                 axios
-                    .get(url, config)
+                    .get(url)
                     .then(respose => {
                         this.marcas = respose.data;
                         // console.log(this.marcas);
@@ -338,19 +324,12 @@
             },
 
             deleteMarca() {
-                const config = {
-                    headers: {
-                        'Authorization': `Bearer ${this.token}`,
-                        'Accept': 'application/json'
-                    }
-                }
+
+                let url = `${this.apiUrl}/${this.$store.state.item.id}`;
 
                 axios
-                    .post(`${this.apiUrl}/${this.$store.state.item.id}`,
-                        {
-                            _method: 'DELETE'
-                        }, config
-                    ).then(response => {
+                    .post(url, { _method: 'DELETE' })
+                    .then(response => {
                         this.$store.state.status = 'success';
                         this.$store.state.statusMessage = response;
 
@@ -370,9 +349,7 @@
 
                 const config = {
                     headers: {
-                        'Authorization': `Bearer ${this.token}`,
-                        'Content-Type': 'multipart/form-data',
-                        'Accept': 'application/json'
+                        'Content-Type': 'multipart/form-data'
                     }
                 }
 
@@ -402,9 +379,7 @@
 
                 const config = {
                     headers: {
-                        'Authorization': `Bearer ${this.token}`,
-                        'Content-Type': 'multipart/form-data',
-                        'Accept': 'application/json'
+                        'Content-Type': 'multipart/form-data'
                     }
                 }
 
