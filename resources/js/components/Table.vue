@@ -4,7 +4,7 @@
             <tr>
                 <th v-for="th, key in headers" :key="key">{{ th.title }}</th>
 
-                <th v-if="show || update || remove"></th>
+                <th v-if="show.visible || update || remove.visible"></th>
             </tr>
         </thead>
         <tbody>
@@ -15,19 +15,32 @@
                     <span v-else>{{ item[key] }}</span>
                 </td>
 
-                <td class="text-right" v-if="show || update || remove">
+                <td class="text-right" v-if="show.visible || update || remove.visible">
                     <div class="d-flex justify-content-between">
                         <button
                             class="text-primary btn btn-link"
                             type="button"
-                            v-if="show"
+                            v-if="show.visible"
                             data-bs-toggle="modal"
-                            :data-bs-target="'#' + idShowItemModal">
+                            :data-bs-target="show.target"
+                            @click="setStore(item)"
+                            >
 
                             <i class="bi bi-eye-fill"/>
                         </button>
+
                         <i v-if="update" class="bi bi-pencil-square text-secondary btn btn-link"></i>
-                        <i v-if="remove" class="bi bi-trash-fill text-danger btn btn-link"></i>
+
+                        <button
+                            class="text-danger btn btn-link"
+                            type="button"
+                            v-if="remove.visible"
+                            data-bs-toggle="modal"
+                            :data-bs-target="remove.target"
+                            @click="setStore(item)">
+
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
                     </div>
                 </td>
             </tr>
@@ -43,7 +56,14 @@
             'update',
             'show',
             'remove',
-            'idShowItemModal'
         ],
+        methods: {
+            setStore(item) {
+
+                this.$store.state.status = '';
+                this.$store.state.statusMessage = [];
+                this.$store.state.item = item;
+            }
+        }
     }
 </script>

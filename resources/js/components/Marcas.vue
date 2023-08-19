@@ -2,7 +2,7 @@
     <Card header="Marcas">
         <template v-slot:headerActions>
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newMarcaModal">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newMarcaModal" @click="$store.state.status = ''; $store.state.statusMessage = [];">
                 <i class="bi bi-plus"></i>
                 Nova
             </button>
@@ -36,10 +36,15 @@
                 v-if="marcas.data"
                 :data="marcas.data"
                 :headers="headers"
-                :show="true"
-                id-show-item-modal="showMarcaModal"
+                :show="{
+                    visible: true,
+                    target: '#showMarcaModal'
+                }"
                 :update="true"
-                :remove="true"
+                :remove="{
+                    visible: true,
+                    target: '#deleteMarcaModal'
+                }"
             />
 
             <!-- Modal Adicionar Marca -->
@@ -51,14 +56,14 @@
 
                 <template v-slot:modalAlert>
                     <Alert
-                        v-if="status == 'success'"
+                        v-if="$store.state.status == 'success'"
                         type="success"
-                        :details="statusDetails"
+                        :details="$store.state.statusMessage"
                     />
                     <Alert
-                        v-if="status == 'error'"
+                        v-if="$store.state.status == 'error'"
                         type="danger"
-                        :details="statusDetails"
+                        :details="$store.state.statusMessage"
                     />
                 </template>
 
@@ -101,10 +106,76 @@
             <Modal
                 id="showMarcaModal"
                 title-id="showMarcaModalLabel"
-                title="Marca"
+                :title="'Marca ' + $store.state.item.nome"
                 :close-button="true">
                 <template v-slot:modalBody>
-                    ...
+                    <div class="row mb-3">
+                        <div class="col-6 text-end">
+                                <img v-if="$store.state.item.imagem" :src="'/storage/' + $store.state.item.imagem" :alt="'Logo da marca ' + $store.state.item.nome" class="img-thumbnail rounded shadow-sm">
+                        </div>
+                        <div class="col-6 text-start">
+                            <p>Cód: <b>{{ $store.state.item.id }}</b></p>
+                            <p>Nome: {{ $store.state.item.nome }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col"><hr></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <p>Criada em: {{ $store.state.item.created_at }}</p>
+                            <p>Atualizada em: {{ $store.state.item.updated_at }}</p>
+                        </div>
+                    </div>
+                </template>
+                <template v-slot:modalFooter>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </template>
+            </Modal>
+
+            <!-- Modal Remoção Marca -->
+            <Modal
+                id="deleteMarcaModal"
+                title-id="deleteMarcaModalLabel"
+                :title="($store.state.status == 'success') ? 'Tudo certo!' : 'Remover Marca ' + $store.state.item.nome + ' ?'"
+                :close-button="true">
+
+                <template v-slot:modalAlert>
+                    <Alert
+                        v-if="$store.state.status == 'success'"
+                        type="success"
+                        :details="$store.state.statusMessage"
+                    />
+                    <Alert
+                        v-if="$store.state.status == 'error'"
+                        type="danger"
+                        :details="$store.state.statusMessage"
+                    />
+                </template>
+
+                <template v-slot:modalBody v-if="$store.state.status == ''">
+                    <div class="row mb-3">
+                        <div class="col-6 text-end">
+                                <img v-if="$store.state.item.imagem" :src="'/storage/' + $store.state.item.imagem" :alt="'Logo da marca ' + $store.state.item.nome" class="img-thumbnail rounded shadow-sm">
+                        </div>
+                        <div class="col-6 text-start">
+                            <p>Cód: <b>{{ $store.state.item.id }}</b></p>
+                            <p>Nome: {{ $store.state.item.nome }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col"><hr></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <p>Criada em: {{ $store.state.item.created_at }}</p>
+                            <p>Atualizada em: {{ $store.state.item.updated_at }}</p>
+                        </div>
+                    </div>
+                </template>
+                <template v-slot:modalFooter>
+                    <button type="button" :class="'btn btn-' + (($store.state.status == '') ? 'secondary' : 'primary')" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-danger" @click="deleteMarca()" v-if="$store.state.status == ''">Remover</button>
                 </template>
             </Modal>
         </template>
@@ -133,6 +204,7 @@
     import Modal from './Modal.vue';
     import Alert from './Alert.vue';
     import Paginate from './Paginate.vue';
+import axios from 'axios';
 
     export default {
         components: {
@@ -151,8 +223,6 @@
                 apiUrl: 'http://localhost:8000/api/v1/marca',
                 urlPaginate: '',
                 urlFilter: '',
-                status: '',
-                statusDetails: [],
                 marcas: {},
                 headers: {
                     id: { title: "Id", type: "text" },
@@ -175,9 +245,11 @@
             }
         },
         methods: {
+
             loadImage(event) {
                 this.newMarcaImage = event.target.files
             },
+
             getMarcas() {
                 let url = this.apiUrl;
 
@@ -204,8 +276,34 @@
                         // console.log(this.marcas);
                     })
             },
-            save() {
 
+            deleteMarca() {
+                const config = {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Accept': 'application/json'
+                    }
+                }
+
+                axios
+                    .post(`${this.apiUrl}/${this.$store.state.item.id}`,
+                        {
+                            _method: 'DELETE'
+                        }, config
+                    ).then(response => {
+                        this.$store.state.status = 'success';
+                        this.$store.state.statusMessage = response;
+
+                        this.getMarcas();
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        this.$store.state.status = 'error';
+                        this.$store.state.statusMessage = error.response;
+                    });
+            },
+
+            save() {
                 const formData = new FormData();
                 formData.append('nome', this.newMarcaName);
                 formData.append('imagem', this.newMarcaImage[0]);
@@ -221,15 +319,18 @@
                 axios
                     .post(this.apiUrl, formData, config)
                     .then(response => {
-                        this.status = 'success';
-                        this.statusDetails = response;
+                        this.$store.state.status = 'success';
+                        this.$store.state.statusMessage = response;
+
+                        this.getMarcas();
                     })
                     .catch(error => {
-                        this.status = 'error';
-                        this.statusDetails = error.response;
+                        this.$store.state.status = 'error';
+                        this.$store.state.statusMessage = error.response;
                         console.log(error.response);
                     });
             },
+
             paginate(page) {
 
                 if(!page.url) return;
@@ -239,8 +340,8 @@
 
                 this.getMarcas();
             },
-            filter() {
 
+            filter() {
                 let filters = '';
 
                 for (const key in this.search) {
