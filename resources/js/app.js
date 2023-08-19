@@ -50,6 +50,18 @@ Vue.component('paginate-component', require('./components/Paginate.vue').default
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+Vue.filter('formatDateTime', (dateTime) => {
+    if(!dateTime) return '';
+
+    dateTime = dateTime.split('T');
+
+    let date = dateTime[0].split('-');
+    let time = dateTime[1].split('.');
+    time = time[0].split(':');
+
+    return `${date[2]}/${date[1]}/${date[0]} ${time[0]}:${time[1]}`;
+})
+
 const app = new Vue({
     el: '#app',
     store
